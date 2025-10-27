@@ -5,17 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Trang quản trị HFTA</title>
   <link rel="stylesheet" href="style.css" />
-  <!-- Thêm icon (Font Awesome) -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
-  <!-- SCRIPT "NGƯỜI GÁC CỔNG" FIREBASE (Giữ nguyên bản sửa lỗi cuối) -->
   <script type="module">
     // Import các hàm bạn cần từ SDK v9
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
     import { getFirestore } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js"; // *** THÊM IMPORT ***
 
-    // Your web app's Firebase configuration (Lấy từ file index.html của bố)
+    // Your web app's Firebase configuration (Đã lấy từ file index.html của bố)
     const firebaseConfig = {
         apiKey: "AIzaSyBfu2qVSLiTIaf2xUwVUw0AzROtE5YS8Tc",
         authDomain: "hfta-a1cdc.firebaseapp.com",
@@ -97,6 +95,7 @@
             } else { console.error("Lỗi: Không tìm thấy hàm runDashboard() trong script.js sau khi tải xong."); }
         } catch (error) {
             console.error("Lỗi nghiêm trọng khi tải script dashboard:", error);
+            alert("Lỗi tải tài nguyên trang web. Vui lòng kiểm tra Console (F12) và thử lại.");
         }
     }
   </script>
@@ -104,15 +103,12 @@
 </head>
 <body>
 
-  <!-- ======= HEADER (Giữ nguyên cấu trúc gốc) ======= -->
   <header class="navbar">
     <div class="nav-left">
       <img src="logo.png" alt="Logo" class="nav-logo" id="app-logo" />
       <h1 id="app-title">Hanoi Center for Financial and Technology Analytics</h1>
     </div>
-    <div class="nav-right"> <!-- Thêm div bao bọc menu và user -->
-        <nav class="nav-menu">
-            <!-- Giữ nguyên các nút gốc -->
+    <div class="nav-right"> <nav class="nav-menu">
             <button class="tab active" data-tab="overview">Tổng quan</button>
             <button class="tab" data-tab="quant">Quant AI</button>
             <button class="tab" data-tab="sentiment">Sentiment AI</button>
@@ -121,10 +117,8 @@
             <button class="tab" data-tab="advisor">Cố vấn</button>
             <button class="tab" data-tab="console">AI Console</button>
             <button class="tab" data-tab="report">Báo cáo</button>
-            <!-- *** THÊM NÚT MAIL *** -->
             <button class="tab" data-tab="mail"><i class="fa-solid fa-envelope"></i> Hộp thư</button>
         </nav>
-        <!-- PHẦN USER PROFILE (Đơn giản) -->
         <div class="user-profile-simple">
             <span id="user-email-display">Đang tải...</span>
             <button id="logout-button-simple"><i class="fa-solid fa-right-from-bracket"></i></button>
@@ -132,11 +126,9 @@
     </div>
   </header>
 
-  <!-- ======= DASHBOARD CONTENT ======= -->
   <main id="content">
 
-    <!-- Các section cũ (overview -> report) **GIỮ NGUYÊN CODE HTML GỐC** -->
-     <section id="overview" class="tab-content active">
+    <section id="overview" class="tab-content active">
       <h2>📊 Tổng quan hệ thống</h2>
       <div class="cards">
         <div class="card">
@@ -203,53 +195,41 @@
       <button id="exportPDF">Xuất báo cáo</button>
     </section>
 
-    <!-- *** GIAO DIỆN MAIL MỚI (Đã sửa layout) *** -->
     <section id="mail" class="tab-content">
-      <!-- <h2>✉️ Hòm thư nội bộ</h2> Bỏ tiêu đề chung -->
-      <div class="mail-layout-v3"> <!-- Sử dụng layout 3 cột -->
-
-        <!-- Cột 1: Sidebar (Ẩn trên mobile < 768px) -->
-        <div class="mail-sidebar card">
+      <div class="mail-layout-v3"> <div class="mail-sidebar card">
           <button id="mail-compose-new-btn-desktop" class="mail-compose-btn"><i class="fa-solid fa-pencil"></i> Soạn thư</button>
           <ul class="mail-folders">
-            <li class="mail-folder active" data-folder="inbox"><i class="fa-solid fa-inbox"></i> Hộp thư đến</li>
-            <li class="mail-folder" data-folder="sent"><i class="fa-solid fa-paper-plane"></i> Thư đã gửi</li>
+            <li id="folder-inbox" class="mail-folder active" data-folder="inbox"><i class="fa-solid fa-inbox"></i> Hộp thư đến</li>
+            <li id="folder-sent" class="mail-folder" data-folder="sent"><i class="fa-solid fa-paper-plane"></i> Thư đã gửi</li>
           </ul>
         </div>
 
-        <!-- Cột 2: Danh sách thư -->
         <div class="mail-list-container card">
-          <!-- *** THÊM NÚT CHỌN FOLDER CHO MOBILE (< 992px) *** -->
           <div class="mail-mobile-folder-selector">
               <button class="folder-btn active" data-folder="inbox"><i class="fa-solid fa-inbox"></i> Đến</button>
               <button class="folder-btn" data-folder="sent"><i class="fa-solid fa-paper-plane"></i> Đã gửi</button>
           </div>
-          <div class="mail-list-header" id="mail-list-header">Hộp thư đến</div> <!-- Tiêu đề mặc định -->
-          <div id="mail-list" class="mail-list">
+          <div class="mail-list-header" id="mail-list-header">Hộp thư đến</div> <div id="mail-list" class="mail-list">
             <p class="loading-text">Đang tải thư...</p>
           </div>
         </div>
 
-        <!-- Cột 3: Chi tiết thư -->
         <div class="mail-reader-container card">
           <div id="mail-reader-placeholder" class="mail-reader-empty">
             <i class="fa-regular fa-envelope-open"></i>
             <p>Chọn một thư để xem chi tiết</p>
           </div>
-          <div id="mail-reader-content" style="display: none;"> <!-- Nội dung chi tiết -->
-             <button id="mail-reader-back-btn" class="mail-reader-back-btn" style="display: none;"><i class="fa-solid fa-arrow-left"></i></button> <!-- Nút Back cho mobile/tablet -->
-             <div class="mail-reader-header">
+          <div id="mail-reader-content" style="display: none;"> <button id="mail-reader-back-btn" class="mail-reader-back-btn" style="display: none;"><i class="fa-solid fa-arrow-left"></i></button> <div class="mail-reader-header">
                 <h3 id="reader-subject"></h3>
                 <p><strong id="reader-from-label">Từ:</strong> <span id="reader-from"></span></p>
                 <p><strong>Đến:</strong> <span id="reader-to"></span></p>
                 <p><small id="reader-timestamp"></small></p>
              </div>
              <hr>
-             <div class="mail-reader-body" id="reader-body"></div>
+             <div id="reader-body" class="mail-reader-body"></div>
           </div>
         </div>
 
-        <!-- Pop-up Soạn thư (Modal - Giữ nguyên) -->
         <div id="mail-compose-modal" class="mail-modal">
           <div class="mail-modal-content">
             <div class="mail-modal-header">
@@ -266,16 +246,12 @@
           </div>
         </div>
 
-        <!-- *** NÚT SOẠN THƯ NỔI CHO MOBILE (< 768px) *** -->
         <button id="mail-compose-fab" class="mail-compose-fab"><i class="fa-solid fa-plus"></i></button>
 
       </div>
     </section>
-    <!-- *** KẾT THÚC SECTION MAIL *** -->
+    </main>
 
-  </main>
-
-  <!-- FOOTER (Giữ nguyên) -->
   <footer>
     <p>Hanoi Center for Financial and Technology Analytics © 2025 | Designed by Thanh Le</p>
     <p>Liên hệ: <a href="facebook.com">Facebook</a></p>
