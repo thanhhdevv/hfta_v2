@@ -23,7 +23,7 @@ function runDashboard(loggedInUser) { // *** NHẬN USER TỪ dashboard.html ***
 
 
     // =========================================================================
-    // --- 1. DOM Elements Cache (Đã Fix Lỗi ReferenceError) ---
+    // --- 1. DOM Elements Cache (Lấy an toàn hơn) ---
     // =========================================================================
     let initializationError = false;
     function getElement(id, required = true) { const el = document.getElementById(id); if (!el && required) { console.error(`CRITICAL: Element ID "${id}" not found!`); initializationError = true; } return el; }
@@ -130,10 +130,10 @@ function runDashboard(loggedInUser) { // *** NHẬN USER TỪ dashboard.html ***
         readerTo = getElement('reader-to', true);
         readerTimestamp = getElement('reader-timestamp', true);
         readerBody = getElement('reader-body', true);
-        mailReaderBackBtn = getElement('mail-reader-back-btn', false); // Nút back là optional
+        mailReaderBackBtn = getElement('mail-reader-back-btn', false);
         
-        const mailFoldersDesktop = querySelectorAll('.mail-folder', false); // Desktop folders
-        const mobileFolderButtons = querySelectorAll('.mail-mobile-folder-selector .folder-btn', false); // Mobile folders
+        const mailFoldersDesktop = querySelectorAll('.mail-folder', false);
+        const mobileFolderButtons = querySelectorAll('.mail-mobile-folder-selector .folder-btn', false);
         const allFolderButtons = Array.from(mailFoldersDesktop || []).concat(Array.from(mobileFolderButtons || []));
 
 
@@ -168,7 +168,6 @@ function runDashboard(loggedInUser) { // *** NHẬN USER TỪ dashboard.html ***
 
     // --- Logic Hiển thị Chi tiết Mail ---
     function showMailDetail(msgData) { /* ... Giữ nguyên hàm showMailDetail ... */
-        // Lấy lại element ngay trước khi dùng để chắc chắn
         const readerSubject = getElement('reader-subject', false); const readerFrom = getElement('reader-from', false); const readerTo = getElement('reader-to', false);
         const readerTimestamp = getElement('reader-timestamp', false); const readerBody = getElement('reader-body', false);
         const mailReaderContent = getElement('mail-reader-content', false); const mailReaderPlaceholder = getElement('mail-reader-placeholder', false);
@@ -210,7 +209,7 @@ function runDashboard(loggedInUser) { // *** NHẬN USER TỪ dashboard.html ***
     function loadMessages(folder = 'inbox') {
         currentSelectedFolder = folder;
         // Lấy element NGAY KHI CẦN (khắc phục lỗi ReferenceError)
-        mailListDiv = getElement('mail-list', true); mailListHeader = getElement('mail-list-header', true);
+        mailListDiv = getElement('mail-list'); mailListHeader = getElement('mail-list-header');
 
         if (!mailListDiv || !mailListHeader) { console.error("Mail list UI missing in loadMessages!"); return; }
 
@@ -290,7 +289,7 @@ function runDashboard(loggedInUser) { // *** NHẬN USER TỪ dashboard.html ***
             const to = mailToInput.value.trim(); const subject = mailSubjectInput.value.trim(); const body = mailBodyInput.value.trim();
             if (!to || !subject || !body) { mailStatus.textContent = "Vui lòng nhập đủ thông tin!"; mailStatus.style.color = "red"; return; }
             if (!/\S+@\S+\.\S+/.test(to)) { mailStatus.textContent = "Email nhận không hợp lệ!"; mailStatus.style.color = "red"; return; }
-            mailSendBtn.textContent = "Đang gửi..."; mailSendBtn.disabled = true; mailStatus.textContent = "";
+            sendBtn.textContent = "Đang gửi..."; sendBtn.disabled = true; mailStatus.textContent = "";
             try { 
                 await db.collection("messages").add({ to: to, from: userEmail, subject: subject, body: body, timestamp: firebase.firestore.FieldValue.serverTimestamp() }); 
                 mailStatus.textContent = "Gửi thành công!"; mailStatus.style.color = "green"; 
@@ -309,7 +308,7 @@ function runDashboard(loggedInUser) { // *** NHẬN USER TỪ dashboard.html ***
                 }
                 mailStatus.style.color = "red"; 
             }
-            finally { setTimeout(() => { if (mailSendBtn) { mailSendBtn.textContent = "Gửi"; mailSendBtn.disabled = false; } }, 1500); }
+            finally { setTimeout(() => { if (mailSendBtn) { sendBtn.textContent = "Gửi"; sendBtn.disabled = false; } }, 1500); }
          };
     } else { console.warn("Nút gửi mail không tồn tại."); }
 
@@ -320,7 +319,7 @@ function runDashboard(loggedInUser) { // *** NHẬN USER TỪ dashboard.html ***
         if (currentActiveTabButton && currentActiveTabButton.dataset.tab === 'mail') {
             if (!currentMailListener) { initializeMailElements(); loadMessages('inbox'); }
         }
-    }, 300); // Tăng độ trễ lên một chút nữa
+    }, 300); // Tăng độ trễ hơn nữa
 
 
     // ===============================================
