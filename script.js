@@ -283,13 +283,19 @@ function runDashboard(loggedInUser) { // *** NHẬN USER TỪ dashboard.html ***
         window.onclick = (event) => { if (event.target == mailComposeModal) mailComposeModal.style.display = "none"; };
     } else { console.warn("Compose modal elements not found."); }
 
-    // --- Logic Gửi Mail (ĐÃ FIX) ---
+    // --- Logic Gửi Mail (ĐÃ SỬA LỖI) ---
     if (mailSendBtn && mailToInput && mailSubjectInput && mailBodyInput && mailStatus) {
-        mailSendBtn.onclick = async () => { /* ... Code gửi mail như cũ ... */
+        mailSendBtn.onclick = async () => {
             const to = mailToInput.value.trim(); const subject = mailSubjectInput.value.trim(); const body = mailBodyInput.value.trim();
             if (!to || !subject || !body) { mailStatus.textContent = "Vui lòng nhập đủ thông tin!"; mailStatus.style.color = "red"; return; }
             if (!/\S+@\S+\.\S+/.test(to)) { mailStatus.textContent = "Email nhận không hợp lệ!"; mailStatus.style.color = "red"; return; }
-            sendBtn.textContent = "Đang gửi..."; sendBtn.disabled = true; mailStatus.textContent = "";
+            
+            // ===== SỬA LỖI Ở ĐÂY =====
+            mailSendBtn.textContent = "Đang gửi..."; // Sửa từ 'sendBtn'
+            mailSendBtn.disabled = true; // Sửa từ 'sendBtn'
+            // ========================
+
+            mailStatus.textContent = "";
             try { 
                 await db.collection("messages").add({ to: to, from: userEmail, subject: subject, body: body, timestamp: firebase.firestore.FieldValue.serverTimestamp() }); 
                 mailStatus.textContent = "Gửi thành công!"; mailStatus.style.color = "green"; 
@@ -308,7 +314,16 @@ function runDashboard(loggedInUser) { // *** NHẬN USER TỪ dashboard.html ***
                 }
                 mailStatus.style.color = "red"; 
             }
-            finally { setTimeout(() => { if (mailSendBtn) { sendBtn.textContent = "Gửi"; sendBtn.disabled = false; } }, 1500); }
+            finally { 
+                setTimeout(() => { 
+                    if (mailSendBtn) { 
+                        // ===== SỬA LỖI Ở ĐÂY =====
+                        mailSendBtn.textContent = "Gửi"; // Sửa từ 'sendBtn'
+                        mailSendBtn.disabled = false; // Sửa từ 'sendBtn'
+                        // ========================
+                    } 
+                }, 1500); 
+            }
          };
     } else { console.warn("Nút gửi mail không tồn tại."); }
 
