@@ -1,0 +1,388 @@
+/* SỬA LẠI BODY ĐỂ FIX FOOTER */
+body {
+  font-family: "Segoe UI", sans-serif;
+  margin: 0;
+  background: #fffef8;
+  color: #333;
+  line-height: 1.6;
+  overflow-x: hidden;
+  animation: fadeIn 1s ease;
+
+  display: flex; /* <-- ĐÃ THÊM */
+  flex-direction: column; /* <-- ĐÃ THÊM */
+  min-height: 100vh; /* <-- ĐÃ THÊM */
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== HEADER ===== */
+.navbar {
+  background: linear-gradient(90deg, #fffbe8, #fff3c2);
+  padding: 10px 20px; /* Giảm padding */
+  box-shadow: 0 2px 10px rgba(255, 215, 0, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap; /* Cho phép xuống dòng */
+  gap: 10px; /* Khoảng cách khi xuống dòng */
+}
+
+.nav-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0; /* Không co lại */
+}
+
+.nav-logo {
+  height: 35px; /* Giảm chiều cao */
+  width: auto;
+  object-fit: contain;
+  /* animation: spinCoin 6s linear infinite; */ /* <-- ĐÃ COMMENT OUT */
+}
+
+.nav-left h1 {
+  font-size: 1rem; /* Giảm cỡ chữ */
+  margin: 0;
+  white-space: nowrap; /* Không xuống dòng */
+}
+
+.nav-right {
+    display: flex;
+    align-items: center;
+    gap: 15px; /* Khoảng cách giữa menu và user */
+    flex-grow: 1; /* Cho phép chiếm không gian */
+    justify-content: flex-end; /* Đẩy sang phải */
+    flex-wrap: wrap; /* Cho phép xuống dòng */
+}
+
+.nav-menu {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px; /* Giảm khoảng cách nút */
+}
+
+.nav-menu .tab {
+  background: #fff8c5;
+  border: none;
+  border-radius: 6px; /* Bo góc ít hơn */
+  padding: 6px 10px; /* Giảm padding nút */
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.85rem; /* Giảm cỡ chữ nút */
+  white-space: nowrap; /* Không xuống dòng chữ trong nút */
+}
+.nav-menu .tab i {
+    margin-right: 4px; /* Giảm khoảng cách icon */
+}
+
+.nav-menu .tab:hover {
+  background: #ffe78c;
+  transform: scale(1.03); /* Hiệu ứng nhỏ hơn */
+}
+
+.nav-menu .active {
+  background: #ffde5d;
+  box-shadow: 0 0 8px rgba(255, 215, 0, 0.4); /* Giảm shadow */
+}
+
+/* --- User Profile Đơn Giản --- */
+.user-profile-simple {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.85rem;
+    color: #555;
+    margin-left: 10px; /* Thêm khoảng cách với menu */
+}
+#logout-button-simple {
+    background: none;
+    border: none;
+    color: #dc3545; /* Màu đỏ */
+    cursor: pointer;
+    font-size: 1rem; /* Cỡ icon */
+    padding: 5px;
+}
+#logout-button-simple:hover {
+    color: #a02734; /* Đỏ đậm hơn */
+}
+
+
+/* ===== CONTENT (Giữ nguyên từ code gốc) ===== */
+main {
+  padding: 20px;
+  flex: 1;
+}
+
+section {
+  display: none;
+  animation: fadeSlide 0.6s ease;
+}
+
+section.active {
+  display: block;
+}
+
+@keyframes fadeSlide {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== CARDS (Giữ nguyên từ code gốc) ===== */
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 15px;
+}
+
+.card {
+  background: #fffef1;
+  border: 1px solid #fce98b;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 3px 8px rgba(255, 215, 0, 0.25);
+  transition: all 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 15px rgba(255, 215, 0, 0.35);
+}
+
+.big-number {
+  font-size: 24px;
+  color: #a37400;
+  font-weight: bold;
+}
+
+/* ===== CHAT / CONSOLE (Giữ nguyên từ code gốc) ===== */
+.chat-box {
+  background: #fffef4;
+  border: 1px solid #f8e49c;
+  padding: 15px;
+  border-radius: 10px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.msg { margin-bottom: 10px; padding: 8px 10px; border-radius: 8px; }
+.msg.ai { background: #fff3c2; }
+.msg.human { background: #e8f6ff; text-align: right; }
+
+#aiInput { width: 100%; height: 80px; border-radius: 10px; border: 1px solid #f3d97a; padding: 10px; box-sizing: border-box; }
+#runAI { margin-top: 10px; background: #ffe78c; border: none; border-radius: 8px; padding: 8px 15px; cursor: pointer; }
+#aiOutput { margin-top: 15px; padding: 10px; background: #fffef4; border: 1px solid #f3d97a; border-radius: 8px; min-height: 50px; }
+
+/* ===== DEMO IMAGE & CHART (Giữ nguyên từ code gốc) ===== */
+.demo-img { width: 100%; max-width: 600px; border-radius: 10px; }
+.chart-box { max-width: 800px; margin: 15px auto; }
+.sentiment-meter { height: 30px; width: 100%; background: #eee; border-radius: 15px; padding: 0; overflow: hidden; margin-top: 10px; position: relative; }
+.sentiment-meter .fill { height: 100%; background: #ffde5d; transition: width 0.5s ease-out;}
+#sentiment-score-text { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); font-size: 0.8rem; font-weight: bold; color: #333; mix-blend-mode: difference; }
+
+/* ===============================================
+== BẮT ĐẦU CSS MỚI CHO APP MAIL (3 CỘT) ==
+===============================================
+*/
+/* Ẩn section mail ban đầu */
+section#mail { display: none; }
+section#mail.active { display: block; }
+
+/* Layout 3 cột */
+.mail-layout-v3 {
+  display: grid;
+  grid-template-columns: 200px minmax(250px, 1fr) minmax(300px, 2fr); /* Sidebar, List, Reader */
+  gap: 0px;
+  height: calc(100vh - 60px - 40px - 40px); /* Cao 100vh trừ header, padding main, margin top */
+  min-height: 500px;
+  margin-top: 15px;
+  overflow: hidden;
+  border: 1px solid #fce98b;
+  border-radius: 12px;
+}
+
+/* Style chung cho các cột */
+.mail-sidebar, .mail-list-container, .mail-reader-container {
+  background: #fffef1; padding: 0; box-shadow: none; border: none; border-radius: 0;
+  display: flex; flex-direction: column; overflow: hidden;
+}
+
+/* --- Cột 1: Sidebar --- */
+.mail-sidebar { padding: 15px; border-right: 1px solid #fce98b; }
+.mail-compose-btn { background: #0d6efd; color: white; border: none; border-radius: 20px; padding: 10px 15px; cursor: pointer; text-align: center; margin-bottom: 20px; font-weight: 500; transition: background-color 0.2s; flex-shrink: 0; }
+.mail-compose-btn:hover { background: #0b5ed7; }
+.mail-compose-btn i { margin-right: 8px; }
+.mail-folders { list-style: none; padding: 0; margin: 0; overflow-y: auto; }
+.mail-folder { padding: 10px 15px; border-radius: 6px; cursor: pointer; margin-bottom: 5px; color: #495057; transition: background-color 0.2s; font-size: 0.9rem; }
+.mail-folder i { margin-right: 10px; width: 18px; }
+.mail-folder:hover { background: #fff9e0; }
+.mail-folder.active { background: #ffe78c; font-weight: 600; color: #333; }
+
+/* --- Cột 2: Danh sách thư --- */
+.mail-list-container { border-right: 1px solid #fce98b; }
+.mail-list-header { padding: 15px; font-weight: 600; border-bottom: 1px solid #fce98b; background: #fffbe8; flex-shrink: 0; font-size: 0.9rem; }
+/* *** NÚT CHỌN FOLDER CHO MOBILE *** */
+.mail-mobile-folder-selector { display: none; padding: 10px; border-bottom: 1px solid #fce98b; background: #fffbe8; text-align: center; } /* Ẩn mặc định */
+.mail-mobile-folder-selector .folder-btn { background: #fff8c5; border: 1px solid #fce98b; border-radius: 6px; padding: 5px 10px; cursor: pointer; font-size: 0.85rem; margin: 0 3px;}
+.mail-mobile-folder-selector .folder-btn.active { background: #ffde5d; font-weight: bold;}
+
+.mail-list { overflow-y: auto; flex-grow: 1; }
+.mail-item { padding: 12px 15px; border-bottom: 1px solid #f8e49c; cursor: pointer; transition: background-color 0.15s ease-out; }
+.mail-item:hover { background: #fff9e0; }
+.mail-item.active { background: #fff3c2; border-left: 3px solid #ffb300; padding-left: 12px; }
+.mail-item-sender { font-weight: 600; margin-bottom: 3px; font-size: 0.9rem; color: #212529; }
+.mail-item-subject { margin-bottom: 3px; font-size: 0.9rem; color: #343a40; font-weight: 500; }
+.mail-item-preview { font-size: 0.8rem; color: #6c757d; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 2px; }
+.mail-item small { font-size: 0.75rem; color: #888; }
+.loading-text { text-align: center; padding: 20px; color: #888; }
+
+/* --- Cột 3: Chi tiết thư --- */
+.mail-reader-container { position: relative; }
+#mail-reader-placeholder { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; color: #aaa; text-align: center; }
+#mail-reader-placeholder i { font-size: 3rem; margin-bottom: 15px; }
+#mail-reader-content { display: none; height: 100%; flex-direction: column; overflow: hidden; }
+.mail-reader-header { padding: 15px 20px; border-bottom: 1px solid #fce98b; flex-shrink: 0; }
+.mail-reader-header h3 { margin-top: 0; margin-bottom: 10px; font-size: 1.1rem; color: #333;}
+.mail-reader-header p { margin: 2px 0; font-size: 0.85rem; color: #555; }
+.mail-reader-header small { font-size: 0.8rem; color: #777; }
+.mail-reader-body { padding: 20px; font-size: 0.95rem; line-height: 1.7; white-space: pre-wrap; word-wrap: break-word; flex-grow: 1; overflow-y: auto; }
+/* Nút back cho mobile/tablet */
+.mail-reader-back-btn { display: none; position: absolute; top: 10px; left: 10px; background: #fff8c5; border: 1px solid #fce98b; border-radius: 50%; width: 35px; height: 35px; line-height: 35px; text-align: center; font-size: 1rem; cursor: pointer; color: #a37400; z-index: 6; transition: background-color 0.2s; }
+.mail-reader-back-btn:hover { background-color: #ffe78c; }
+
+
+/* --- Modal Soạn thư (Giữ nguyên) --- */
+.mail-modal { display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.4); align-items: flex-end; justify-content: flex-end; }
+.mail-modal-content { background-color: #fffef1; border: 1px solid #fce98b; border-radius: 12px 12px 0 0; width: 500px; max-width: 90%; box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.2); display: flex; flex-direction: column; max-height: 80%; margin-right: 20px; animation: slideUp 0.3s ease-out; }
+@keyframes slideUp { from { transform: translateY(100%); opacity: 0;} to { transform: translateY(0); opacity: 1;} }
+.mail-modal-header { display: flex; justify-content: space-between; align-items: center; padding: 10px 15px; background: #fffbe8; border-bottom: 1px solid #fce98b; border-radius: 12px 12px 0 0; }
+.mail-modal-header h3 { margin: 0; font-size: 1rem; }
+.mail-close-btn { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #aaa; padding: 0 5px; }
+.mail-modal-body { padding: 15px; overflow-y: auto; }
+.mail-modal-body input, .mail-modal-body textarea { width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #f3d97a; border-radius: 8px; box-sizing: border-box; background: #fff; }
+.mail-modal-body textarea { height: 150px; resize: vertical; }
+#mail-send-btn { background: #ffe78c; border: none; border-radius: 8px; padding: 10px 18px; cursor: pointer; font-weight: bold; transition: background-color 0.2s; }
+#mail-send-btn:hover { background: #ffde5d; }
+#mail-status { font-size: 0.85rem; margin-top: 10px; min-height: 1.2em; }
+
+/* *** NÚT SOẠN THƯ NỔI CHO MOBILE *** */
+.mail-compose-fab {
+    display: none; /* Ẩn trên desktop */
+    position: fixed; bottom: 70px; right: 20px; width: 50px; height: 50px;
+    background-color: #0d6efd; color: white; border: none; border-radius: 50%;
+    font-size: 1.5rem; line-height: 50px; text-align: center;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); cursor: pointer; z-index: 90;
+    transition: transform 0.2s ease-out;
+}
+.mail-compose-fab:hover { transform: scale(1.1); }
+
+/* ===============================================
+== KẾT THÚC CSS CHO APP MAIL ==
+===============================================
+*/
+
+
+/* ===== FOOTER (Giữ nguyên) ===== */
+footer {
+  text-align: center; padding: 20px; font-size: 14px; color: #666;
+  background: #fffbe8; border-top: 1px solid #f3d97a;
+  width: 100%; box-sizing: border-box;
+  margin-top: auto; /* Đẩy footer xuống */
+}
+footer a { color: #0d6efd; text-decoration: none;}
+footer a:hover { text-decoration: underline; }
+
+/* ===============================================
+== BẮT ĐẦU CSS RESPONSIVE (ĐÃ SỬA LỖI MAIL) ==
+===============================================
+*/
+@media (max-width: 992px) { /* Tablet */
+     .nav-menu { gap: 3px;}
+     .nav-menu .tab { padding: 5px 8px; font-size: 0.8rem;}
+     .nav-left h1 { font-size: 0.9rem; }
+
+     /* Mail layout: Sidebar + List/Reader */
+     .mail-layout-v3 {
+         grid-template-columns: 200px 1fr; /* 2 cột */
+         height: calc(100vh - 110px);
+     }
+     .mail-reader-container {
+         display: none; /* Ẩn mặc định */
+         border-left: 1px solid #fce98b;
+         grid-column: 2 / 3; grid-row: 1 / 2;
+     }
+     .mail-reader-container.active { display: flex; } /* Hiện khi active */
+     /* Placeholder sẽ chiếm toàn bộ cột 2 nếu reader ẩn */
+     #mail-reader-placeholder { display: flex; grid-column: 2 / 3; grid-row: 1 / 2; border-left: 1px solid #fce98b; }
+     .mail-reader-container.active ~ #mail-reader-placeholder { display: none; }
+
+
+     .mail-list-container { border-right: none;}
+     .mail-reader-back-btn { display: block; } /* Hiện nút back */
+     .mail-compose-fab { display: block; } /* Hiện nút soạn thư nổi */
+     .mail-sidebar .mail-compose-btn { display: block; } /* Vẫn hiện nút soạn thư sidebar */
+     /* *** HIỆN NÚT FOLDER MOBILE TRÊN TABLET *** */
+     .mail-mobile-folder-selector { display: block; }
+     .mail-list-header { display: none; } /* Ẩn header text cũ */
+}
+
+@media (max-width: 768px) { /* Mobile */
+    .navbar { justify-content: space-between; padding: 10px 15px; }
+    .nav-left h1 { display: none; } /* Ẩn tên */
+    .nav-right { justify-content: flex-end; width: auto; margin-top: 0; flex-grow: 0; }
+    .nav-menu {
+         width: 100%; justify-content: center;
+         margin-top: 10px; order: 3;
+         /* display: none; */ /* BỎ ẨN MENU */
+    }
+     .nav-left { order: 1; } .nav-right { order: 2; }
+    .user-profile-simple { margin-left: 0; }
+    main { padding: 15px; }
+    .cards { grid-template-columns: 1fr; }
+
+    /* Mail layout: Chỉ hiển thị List ban đầu */
+    .mail-layout-v3 {
+        grid-template-columns: 1fr; /* Chỉ 1 cột */
+        height: calc(100vh - 100px); border: none; border-radius: 0; margin-top: 10px; gap: 0;
+    }
+    .mail-sidebar { display: none; } /* Ẩn sidebar */
+    .mail-list-container { border-right: none; border-radius: 12px; }
+    /* *** HIỆN NÚT FOLDER MOBILE *** */
+    .mail-mobile-folder-selector { display: block; }
+    .mail-list-header { display: none; } /* Ẩn header text cũ */
+
+    .mail-reader-container {
+        position: fixed; /* Đè lên toàn bộ màn hình */
+        top: 0; left: 0; width: 100%; height: 100%;
+        z-index: 105; /* Nằm trên cả header */
+        background: #fffef1; display: none; /* Ẩn ban đầu */
+        border-left: none; border-radius: 0; padding-top: 50px;
+        box-sizing: border-box;
+    }
+    .mail-reader-container.active { display: flex; } /* Hiện khi active */
+    #mail-reader-placeholder { display: none; } /* Luôn ẩn placeholder */
+    .mail-reader-back-btn {
+        display: block; /* Luôn hiện nút back */
+        position: fixed; /* Fix cứng vị trí */
+        top: 15px; left: 15px; z-index: 110;
+    }
+
+    .mail-modal-content { width: 95%; margin-right: 2.5%; }
+    .mail-compose-fab { display: block; } /* Hiện nút soạn thư nổi */
+}
+
+@media (max-width: 480px) { /* Small Mobile */
+     .card { padding: 15px; }
+     .big-number { font-size: 20px; }
+     .mail-mobile-folder-selector { padding: 8px 10px; }
+     .mail-item { padding: 10px 12px; }
+     .mail-reader-header { padding: 10px 15px; }
+     .mail-reader-body { padding: 15px; }
+}
+/* ===============================================
+== KẾT THÚC CSS RESPONSIVE ==
+===============================================
+*/

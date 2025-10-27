@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Trang quản trị HFTA</title>
+  <link rel="stylesheet" href="style.css" />
+  <!-- Thêm icon (Font Awesome) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <!-- SCRIPT "NGƯỜI GÁC CỔNG" FIREBASE (Giữ nguyên bản sửa lỗi cuối) -->
+  <script type="module">
+    // Import các hàm bạn cần từ SDK v9
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
+    import { getFirestore } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js"; // *** THÊM IMPORT ***
+
+    // Your web app's Firebase configuration (Lấy từ file index.html của bố)
+    const firebaseConfig = {
+        apiKey: "AIzaSyBfu2qVSLiTIaf2xUwVUw0AzROtE5YS8Tc",
+        authDomain: "hfta-a1cdc.firebaseapp.com",
+        projectId: "hfta-a1cdc",
+        storageBucket: "hfta-a1cdc.firebasestorage.app", // Giữ nguyên
+        messagingSenderId: "715501206681",
+        appId: "1:715501206681:web:5bb1a8076e8828d0accc08"
+    };
+
+    // Initialize Firebase v9
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app); // *** KHỞI TẠO DATABASE ***
+
+    // Gán vào global window để script.js (dạng compat v8) có thể dùng
+    window.firebaseV9Services = { auth, db, app };
+    window.firebaseV8Config = firebaseConfig;
+
+    // Đây là "người gác cổng" dùng v9
+    onAuthStateChanged(auth, user => {
+        if (!user) {
+            console.log("Chưa đăng nhập, chuyển về index.html");
+            window.location.href = 'index.html';
+        } else {
+            console.log("Đã đăng nhập v9:", user.email, user.uid);
+            // Chỉ load script sau khi DOM hoàn toàn sẵn sàng VÀ user đã đăng nhập
+            if (document.readyState === 'complete' || document.readyState === 'interactive') {
+                loadDashboardScripts(user);
+            } else {
+                document.addEventListener('DOMContentLoaded', () => loadDashboardScripts(user));
+            }
+        }
+    });
+
+    // Hàm này sẽ tải các script thư viện VÀ script.js của bạn
+    async function loadDashboardScripts(user) { // *** NHẬN USER ***
+        console.log("DOM ready, starting script load...");
+        const scripts = [
+            "https://cdn.jsdelivr.net/npm/chart.js", // Chart.js
+            "https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js", // jsPDF
+            // Tải bản 'compat' (v8)
+            "https://www.gstatic.com/firebasejs/9.15.0/firebase-app-compat.js",
+            "https://www.gstatic.com/firebasejs/9.15.0/firebase-auth-compat.js",
+            "https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore-compat.js", // *** THÊM DÒNG NÀY ***
+            "script.js" // Tải script chính của bạn CUỐI CÙNG
+        ];
+
+        async function loadScript(src) {
+             return new Promise((resolve, reject) => {
+                const script = document.createElement('script');
+                script.src = src;
+                script.onload = () => { console.log(`Loaded: ${src}`); resolve(); }; // Log khi load xong
+                script.onerror = (e) => { console.error(`Error loading: ${src}`, e); reject(e); };
+                document.body.appendChild(script); // Thêm vào body
+            });
+        }
+
+       try {
+            // Tải tuần tự
+            await loadScript(scripts[0]); // Chart.js
+            await loadScript(scripts[1]); // jsPDF
+            await loadScript(scripts[2]); // firebase-app-compat
+
+            // Khởi tạo app compat
+            if (!firebase.apps.length) { // Chỉ khởi tạo nếu chưa có
+                firebase.initializeApp(window.firebaseV8Config);
+                console.log("Firebase v8 compat initialized.");
+            } else { console.log("Firebase v8 compat already initialized."); }
+
+            await loadScript(scripts[3]); // auth-compat
+            await loadScript(scripts[4]); // *** FIRESTORE COMPAT ***
+            await loadScript(scripts[5]); // *** SCRIPT.JS ***
+
+            console.log("Đã tải tất cả script của dashboard.");
+
+            // Gọi hàm runDashboard từ script.js và truyền user vào
+            if (typeof runDashboard === 'function') {
+                runDashboard(user); // *** TRUYỀN USER VÀO ĐÂY ***
+            } else { console.error("Lỗi: Không tìm thấy hàm runDashboard() trong script.js sau khi tải xong."); }
+        } catch (error) {
+            console.error("Lỗi nghiêm trọng khi tải script dashboard:", error);
+        }
+    }
+  </script>
+
+</head>
+<body>
+
+  <!-- ======= HEADER (Giữ nguyên cấu trúc gốc) ======= -->
+  <header class="navbar">
+    <div class="nav-left">
+      <img src="logo.png" alt="Logo" class="nav-logo" id="app-logo" />
+      <h1 id="app-title">Hanoi Center for Financial and Technology Analytics</h1>
+    </div>
+    <div class="nav-right"> <!-- Thêm div bao bọc menu và user -->
+        <nav class="nav-menu">
+            <!-- Giữ nguyên các nút gốc -->
+            <button class="tab active" data-tab="overview">Tổng quan</button>
+            <button class="tab" data-tab="quant">Quant AI</button>
+            <button class="tab" data-tab="sentiment">Sentiment AI</button>
+            <button class="tab" data-tab="risk">Rủi ro</button>
+            <button class="tab" data-tab="macro">Vĩ mô</button>
+            <button class="tab" data-tab="advisor">Cố vấn</button>
+            <button class="tab" data-tab="console">AI Console</button>
+            <button class="tab" data-tab="report">Báo cáo</button>
+            <!-- *** THÊM NÚT MAIL *** -->
+            <button class="tab" data-tab="mail"><i class="fa-solid fa-envelope"></i> Hộp thư</button>
+        </nav>
+        <!-- PHẦN USER PROFILE (Đơn giản) -->
+        <div class="user-profile-simple">
+            <span id="user-email-display">Đang tải...</span>
+            <button id="logout-button-simple"><i class="fa-solid fa-right-from-bracket"></i></button>
+        </div>
+    </div>
+  </header>
+
+  <!-- ======= DASHBOARD CONTENT ======= -->
+  <main id="content">
+
+    <!-- Các section cũ (overview -> report) **GIỮ NGUYÊN CODE HTML GỐC** -->
+     <section id="overview" class="tab-content active">
+      <h2>📊 Tổng quan hệ thống</h2>
+      <div class="cards">
+        <div class="card">
+          <h3 id="live-btc-price-title">Giá BTC hiện tại</h3>
+          <p class="big-number" id="live-btc-price-value">$67,430</p>
+          <small id="live-last-updated">+1.24% trong 24h</small>
+        </div>
+        <div class="card">
+          <h3 id="live-sentiment-title">Độ tin cậy tổng hợp</h3>
+          <p class="big-number" id="live-sentiment-value">82%</p>
+          <small id="live-sentiment-source">Đánh giá bởi 4 Ban AI</small>
+        </div>
+        <div class="card">
+          <h3 id="live-recommendation-title">Khuyến nghị cuối</h3>
+          <p class="big-number" id="live-recommendation-value">LONG 20%</p>
+          <small id="live-recommendation-reason">Theo Kelly Criterion</small>
+        </div>
+      </div>
+    </section>
+    <section id="quant" class="tab-content">
+      <h2>📈 Quant AI – Phân tích kỹ thuật</h2>
+      <p id="quant-summary">AI nhận định xu hướng tăng trung hạn, RSI = 58, MA50 > MA200.</p>
+      <div class="chart-box"> <canvas id="quantChart"></canvas> </div>
+    </section>
+    <section id="sentiment" class="tab-content">
+      <h2>💬 Sentiment AI – Tâm lý thị trường</h2>
+      <p id="sentiment-summary">Twitter: FOMO nhẹ, Reddit: Trung lập. Điểm cảm xúc: <strong>63/100</strong></p>
+      <div class="card sentiment-meter">
+         <div class="fill" id="sentiment-fill" style="width: 63%"></div>
+         <span id="sentiment-score-text">63/100</span>
+      </div>
+    </section>
+    <section id="risk" class="tab-content">
+      <h2>⚠️ Risk AI – Quản trị rủi ro</h2>
+      <ul id="risk-list">
+        <li>Độ biến động hiện tại: <b>3.2%</b></li>
+        <li>Max Drawdown dự kiến: <b>-8.6%</b></li>
+        <li>Khuyến nghị vốn tối đa: <b>25%</b></li>
+      </ul>
+    </section>
+    <section id="macro" class="tab-content">
+      <h2>🌍 Macro AI – Chu kỳ & Dòng tiền</h2>
+      <p>DXY giảm nhẹ, SP500 đi ngang, On-chain inflow giảm 4%. Tín hiệu “Risk-On”.</p>
+      <img src="https://www.tradingview.com/x/bC6TgR9u/" alt="macro chart" class="demo-img" />
+    </section>
+    <section id="advisor" class="tab-content">
+      <h2>🧠 Advisor LLM – Phản biện & Tư duy</h2>
+      <div class="chat-box">
+        <div class="msg ai">Quant AI: Xác suất tăng 68%.</div>
+        <div class="msg ai">Sentiment AI: Tâm lý đang cải thiện.</div>
+        <div class="msg human">Bạn: Xem lại correlation giữa DXY và BTC tuần này.</div>
+        <div class="msg ai">Advisor: Correlation -0.45 ⇒ hỗ trợ tăng giá.</div>
+      </div>
+    </section>
+    <section id="console" class="tab-content">
+      <h2>💻 AI Console</h2>
+      <textarea id="aiInput" placeholder="Nhập lệnh hoặc câu hỏi cho AI..."></textarea>
+      <button id="runAI">Gửi</button>
+      <div id="aiOutput"></div>
+    </section>
+    <section id="report" class="tab-content">
+      <h2>📑 Báo cáo & Xuất PDF</h2>
+      <p>Bấm nút bên dưới để tạo báo cáo PDF.</p>
+      <button id="exportPDF">Xuất báo cáo</button>
+    </section>
+
+    <!-- *** GIAO DIỆN MAIL MỚI (Đã sửa layout) *** -->
+    <section id="mail" class="tab-content">
+      <!-- <h2>✉️ Hòm thư nội bộ</h2> Bỏ tiêu đề chung -->
+      <div class="mail-layout-v3"> <!-- Sử dụng layout 3 cột -->
+
+        <!-- Cột 1: Sidebar (Ẩn trên mobile < 768px) -->
+        <div class="mail-sidebar card">
+          <button id="mail-compose-new-btn-desktop" class="mail-compose-btn"><i class="fa-solid fa-pencil"></i> Soạn thư</button>
+          <ul class="mail-folders">
+            <li class="mail-folder active" data-folder="inbox"><i class="fa-solid fa-inbox"></i> Hộp thư đến</li>
+            <li class="mail-folder" data-folder="sent"><i class="fa-solid fa-paper-plane"></i> Thư đã gửi</li>
+          </ul>
+        </div>
+
+        <!-- Cột 2: Danh sách thư -->
+        <div class="mail-list-container card">
+          <!-- *** THÊM NÚT CHỌN FOLDER CHO MOBILE (< 992px) *** -->
+          <div class="mail-mobile-folder-selector">
+              <button class="folder-btn active" data-folder="inbox"><i class="fa-solid fa-inbox"></i> Đến</button>
+              <button class="folder-btn" data-folder="sent"><i class="fa-solid fa-paper-plane"></i> Đã gửi</button>
+          </div>
+          <div class="mail-list-header" id="mail-list-header">Hộp thư đến</div> <!-- Tiêu đề mặc định -->
+          <div id="mail-list" class="mail-list">
+            <p class="loading-text">Đang tải thư...</p>
+          </div>
+        </div>
+
+        <!-- Cột 3: Chi tiết thư -->
+        <div class="mail-reader-container card">
+          <div id="mail-reader-placeholder" class="mail-reader-empty">
+            <i class="fa-regular fa-envelope-open"></i>
+            <p>Chọn một thư để xem chi tiết</p>
+          </div>
+          <div id="mail-reader-content" style="display: none;"> <!-- Nội dung chi tiết -->
+             <button id="mail-reader-back-btn" class="mail-reader-back-btn" style="display: none;"><i class="fa-solid fa-arrow-left"></i></button> <!-- Nút Back cho mobile/tablet -->
+             <div class="mail-reader-header">
+                <h3 id="reader-subject"></h3>
+                <p><strong id="reader-from-label">Từ:</strong> <span id="reader-from"></span></p>
+                <p><strong>Đến:</strong> <span id="reader-to"></span></p>
+                <p><small id="reader-timestamp"></small></p>
+             </div>
+             <hr>
+             <div class="mail-reader-body" id="reader-body"></div>
+          </div>
+        </div>
+
+        <!-- Pop-up Soạn thư (Modal - Giữ nguyên) -->
+        <div id="mail-compose-modal" class="mail-modal">
+          <div class="mail-modal-content">
+            <div class="mail-modal-header">
+              <h3>Thư mới</h3>
+              <button id="mail-compose-close" class="mail-close-btn">&times;</button>
+            </div>
+            <div class="mail-modal-body">
+              <input type="email" id="mail-to" placeholder="Gửi đến (email)">
+              <input type="text" id="mail-subject" placeholder="Chủ đề">
+              <textarea id="mail-body" placeholder="Nội dung..."></textarea>
+              <button id="mail-send-btn">Gửi</button>
+              <p id="mail-status"></p>
+            </div>
+          </div>
+        </div>
+
+        <!-- *** NÚT SOẠN THƯ NỔI CHO MOBILE (< 768px) *** -->
+        <button id="mail-compose-fab" class="mail-compose-fab"><i class="fa-solid fa-plus"></i></button>
+
+      </div>
+    </section>
+    <!-- *** KẾT THÚC SECTION MAIL *** -->
+
+  </main>
+
+  <!-- FOOTER (Giữ nguyên) -->
+  <footer>
+    <p>Hanoi Center for Financial and Technology Analytics © 2025 | Designed by Thanh Le</p>
+    <p>Liên hệ: <a href="facebook.com">Facebook</a></p>
+  </footer>
+
+</body>
+</html>

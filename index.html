@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trang quản trị HFTA</title>
+    <link rel="stylesheet" href="login.css">
+</head>
+<body>
+    <div class="login-container">
+        <form id="login-form">
+            <img src="logo.png" alt="Logo" class="login-logo">
+            <h2>Hanoi Center for Financial and Technology Analytics</h2>
+            <p>Vui lòng đăng nhập để tiếp tục</p>
+            
+            <div class="input-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            
+            <div class="input-group">
+                <label for="password">Mật khẩu</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            
+            <button type="submit" class="login-button" id="login-button">Đăng nhập</button>
+            <p id="error-message"></p>
+        </form>
+    </div>
+
+    <!-- SỬ DỤNG CODE FIREBASE MỚI CỦA BẠN -->
+    <script type="module">
+        // Import các hàm bạn cần từ SDK
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
+        // Thêm import cho Authentication
+        import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
+
+        // Your web app's Firebase configuration
+        // (Đây là code config bạn đã cung cấp)
+        const firebaseConfig = {
+            apiKey: "AIzaSyBfu2qVSLiTIaf2xUwVUw0AzROtE5YS8Tc",
+            authDomain: "hfta-a1cdc.firebaseapp.com",
+            projectId: "hfta-a1cdc",
+            storageBucket: "hfta-a1cdc.firebasestorage.app",
+            messagingSenderId: "715501206681",
+            appId: "1:715501206681:web:5bb1a8076e8828d0accc08"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        // Lấy dịch vụ Auth
+        const auth = getAuth(app);
+
+        // Xử lý logic đăng nhập
+        const loginForm = document.getElementById('login-form');
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+        const errorMessage = document.getElementById('error-message');
+        const loginButton = document.getElementById('login-button');
+
+        loginForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+            const email = emailInput.value;
+            const password = passwordInput.value;
+            
+            loginButton.textContent = "Đang xử lý...";
+            loginButton.disabled = true;
+            errorMessage.textContent = "";
+
+            // Gọi API đăng nhập (phiên bản mới)
+            signInWithEmailAndPassword(auth, email, password)
+                .then((userCredential) => {
+                    // Đăng nhập thành công, chuyển hướng
+                    window.location.href = 'dashboard.html';
+                })
+                .catch((error) => {
+                    // Xử lý lỗi
+                    errorMessage.textContent = 'Sai email hoặc mật khẩu!';
+                    loginButton.textContent = "Đăng nhập";
+                    loginButton.disabled = false;
+                });
+        });
+    </script>
+</body>
+</html>

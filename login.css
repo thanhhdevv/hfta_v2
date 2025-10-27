@@ -1,0 +1,71 @@
+body {
+    font-family: "Segoe UI", sans-serif;
+    background: #fffef8;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+.login-container {
+    padding: 40px;
+    background: #fff;
+    border: 1px solid #fce98b;
+    border-radius: 12px;
+    box-shadow: 0 6px 20px rgba(255, 215, 0, 0.35);
+    text-align: center;
+    width: 300px;
+}
+
+.login-logo {
+    width: auto;
+    height: 60px;
+    margin-bottom: 10px;
+}
+
+h2 {
+    margin: 0 0 20px 0;
+    color: #333;
+}
+
+.input-group {
+    margin-bottom: 15px;
+    text-align: left;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 600;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 8px 10px;
+    border-radius: 8px;
+    border: 1px solid #f3d97a;
+    box-sizing: border-box; /* Quan trọng để padding không làm vỡ layout */
+}
+
+.login-button {
+    width: 100%;
+    padding: 10px;
+    background: #ffde5d;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.login-button:hover {
+    background: #ffe78c;
+}
+
+#error-message {
+    margin-top: 15px;
+    color: red;
+    font-size: 14px;
+}
